@@ -9,8 +9,8 @@ LIB_DIR=/lib231
 # path to the test directory
 TEST_DIR=.
 
-$LLVM_BIN/clang -c -O0 $TEST_DIR/test1.c -emit-llvm -S -o /tmp/test1-c.ll
-$LLVM_BIN/clang++ -c -O0 $TEST_DIR/test1.cpp -emit-llvm -S -o /tmp/test1.ll
+$LLVM_BIN/clang -c -O0 $TEST_DIR/test2.c -emit-llvm -S -o /tmp/test1-c.ll
+$LLVM_BIN/clang++ -c -O0 $TEST_DIR/test2.c -emit-llvm -S -o /tmp/test1.ll
 $LLVM_BIN/clang++ -c $LIB_DIR/lib231.cpp -emit-llvm -S -o /tmp/lib231.ll
 $LLVM_BIN/clang++ -c $TEST_DIR/test1-main.cpp -emit-llvm -S -o /tmp/test1-main.ll
 

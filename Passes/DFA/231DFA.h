@@ -13,7 +13,6 @@
 
 #ifndef LLVM_TRANSFORMS_231DFA_H
 #define LLVM_TRANSFORMS_231DFA_H
-
 #include "llvm/InitializePasses.h"
 #include "llvm/IR/CFG.h"
 #include "llvm/IR/InstIterator.h"
@@ -60,14 +59,14 @@ class Info {
      * Direction:
      *   In your subclass you need to implement this function.
      */
-    static Info* join(Info * info1, Info * info2, Info * result);
+    static void join(Info * info1, Info * info2, Info * result);
 };
 
 /*
  * This is the base template class to represent the generic dataflow analysis framework
  * For a specific analysis, you need to create a sublcass of it.
  */
-template <class Info, bool Direction>
+template <class Info, bool Direction> // why add the boolean value directly into the template
 class DataFlowAnalysis {
 
   private:
