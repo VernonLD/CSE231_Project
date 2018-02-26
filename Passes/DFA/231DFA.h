@@ -69,7 +69,7 @@ class Info {
 template <class Info, bool Direction> // why add the boolean value directly into the template
 class DataFlowAnalysis {
 
-  private:
+protected:
 		typedef std::pair<unsigned, unsigned> Edge;
 		// Index to instruction map
 		std::map<unsigned, Instruction *> IndexToInstr;

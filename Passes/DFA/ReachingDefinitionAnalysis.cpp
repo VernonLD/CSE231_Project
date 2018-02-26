@@ -12,18 +12,55 @@
 using namespace llvm;
 using namespace std;
 namespace {
-// MyInfo definition
-	class MyInfo public: Info
+// ReachingInfo definition
+	class ReachingInfo : public Info
 	{
 	public:
-		MyInfo();
-		~MyInfo();
-		void print() = 0;
-		static bool equals(Info * info1, Info * info2){
+        set<unsigned> def_set;
+		void print(){
+            errs() << "definition"<<"\n";
+            for (set<unsigned>::iterator it = def_set.begin(); it!=def_set.end(); ++it){
+                errs() << *it << '|';
+            }
+            errs()<< "\n";
+        }
+		static bool equals(ReachingInfo * info1, ReachingInfo * info2){
+			return info1->def_set == info2->def_set;
 		}
-		static Info* join(Info * info1, Info * info2, Info * result){
+		static void join(ReachingInfo * info1, ReachingInfo * info2, ReachingInfo * result){
+
+
 		}
 		
+	};
+
+
+    class ReachingDefinitionAnalysis : public DataFlowAnalysis<ReachingInfo, true> {
+    public:
+        ReachingDefinitionAnalysis(ReachingInfo &initial, ReachingInfo &bottom):
+                DataFlowAnalysis(initial, bottom){}
+        ~ReachingDefinitionAnalysis(){}
+    private:
+        void flowfunction(Instruction * I,
+                          std::vector<unsigned> & IncomingEdges,
+                          std::vector<unsigned> & OutgoingEdges,
+                          std::vector<ReachingInfo *> & Infos) override {
+            int i = 0;
+            i++;
+        }
+    };
+	
+	struct ReachingDefinitionAnalysisPass : public FunctionPass
+	{
+		static char ID;
+        ReachingDefinitionAnalysisPass() : FunctionPass(ID) {}
+  		bool runOnFunction(Function &F) override {
+            ReachingInfo bottom;
+            ReachingDefinitionAnalysis dfa(bottom, bottom);
+            dfa.runWorklistAlgorithm(&F);
+            dfa.print();
+            return false;
+  		}
 	};
 }
 
