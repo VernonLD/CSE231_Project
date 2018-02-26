@@ -276,8 +276,52 @@ protected:
     	assert(EntryInstr != nullptr && "Entry instruction is null.");
 
     	// (2) Initialize the work list
+        for (auto &it : IndexToInstr){
+            worklist.push_back(it.first);
+        }
 
     	// (3) Compute until the work list is empty
+        // delete storage
+        while (!worklist.empty()){
+            unsigned node = worklist.front();
+            worklist.pop_front();
+            std::vector<unsigned> edge_in,edge_out;
+            getIncomingEdges(node, &edge_in);
+            getOutgoingEdges(node, &edge_out);
+
+            std::vector<Info *> infos(edge_out.size());
+            for (unsigned i = 0; i < infos.size(); ++i){
+                infos[i] = new Info();
+            }
+            // reference pass directly; * pass the &
+            flowfunction(IndexToInstr[node], edge_in, edge_out, infos);
+//            errs() << "Edge "<<node<<"\n";
+            for (unsigned i = 0; i < infos.size(); i++){
+//                errs() << "loop "<<i<<"\n";
+                Edge edge1 = std::make_pair(node,edge_out[i]);
+                Info *info_new = new Info();
+//                errs() << "1 "<<i<<IndexToInstr[node]->getOpcode()<<"\n";
+                Info::join(infos[i],EdgeToInfo[edge1], info_new);
+//                errs() << "2 "<<i<<"\n";
+                if (!Info::equals(EdgeToInfo[edge1], info_new)){
+                    if (EdgeToInfo[edge1] == &Bottom){
+                        EdgeToInfo[edge1] = info_new;
+                    }
+                    else {
+                        delete EdgeToInfo[edge1];
+                        EdgeToInfo[edge1] = info_new;
+                    }
+                    worklist.push_back(edge_out[i]);
+                }
+//                errs() << "loop "<<i<<"\n";
+
+            }
+//            errs() << "End loop "<<node<<"\n";
+
+            for (unsigned i = 0; i < infos.size(); ++i){
+                delete infos[i];
+            }
+        }
     }
 };
 
